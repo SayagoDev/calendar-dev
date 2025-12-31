@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -21,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <head>
           <link rel="icon" href="/favicon.svg" type="image/svg+xml"></link>
         </head>
@@ -32,6 +33,7 @@ export default function RootLayout({
           )}
         >
           {children}
+          <Toaster closeButton />
         </body>
       </html>
     </ClerkProvider>

@@ -9,13 +9,28 @@ export function formatEventDescription(durationInMinutes: number) {
   return `${hoursString} ${minutesString}`;
 }
 
+// Cache para evitar recalcular offsets de zona horaria costosos
+const timezoneOffsetCache = new Map<string, string>();
+
 export function formatTimezoneOffset(timezone: string) {
-  return new Intl.DateTimeFormat(undefined, {
+  // Devolver del cache si ya lo calculamos
+  if (timezoneOffsetCache.has(timezone)) {
+    return timezoneOffsetCache.get(timezone);
+  }
+
+  const offset = new Intl.DateTimeFormat(undefined, {
     timeZone: timezone,
     timeZoneName: "shortOffset",
   })
     .formatToParts(new Date())
     .find((part) => part.type === "timeZoneName")?.value;
+
+  // Guardar en cache para futuras llamadas
+  if (offset) {
+    timezoneOffsetCache.set(timezone, offset);
+  }
+
+  return offset;
 }
 
 const dateFormatter = new Intl.DateTimeFormat(undefined, {

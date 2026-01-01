@@ -23,7 +23,7 @@ import {
   deleteEvent,
   updateEvent,
 } from "@/app/server/actions/events";
-import { Fragment, useTransition } from "react";
+import { Fragment, useMemo, useTransition } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Loader2, Plus, X } from "lucide-react";
@@ -44,13 +44,7 @@ import {
   ScheduleFormSchemaType,
 } from "@/app/schema/schedule";
 import { timeToInt } from "@/lib/utils";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Combobox } from "../ui/combobox";
 import { formatTimezoneOffset } from "@/lib/formatters";
 import { DAY_OF_WEEK_IN_ORDER } from "@/data/constants";
 import { saveSchedule } from "@/app/server/actions/schedule";
@@ -83,6 +77,14 @@ export function ScheduleForm({ schedule }: { schedule?: UserScheduleType }) {
     availabilityFields.map((field, index) => ({ ...field, index })),
     (availability) => availability.dayOfWeek
   );
+
+  // Memoizar las opciones de zona horaria para evitar recalcular en cada render
+  const timezoneOptions = useMemo(() => {
+    return Intl.supportedValuesOf("timeZone").map((timezone) => ({
+      value: timezone,
+      label: `${timezone} (${formatTimezoneOffset(timezone)})`,
+    }));
+  }, []); // Array vacío = solo calcular una vez
 
   async function onSubmit(values: ScheduleFormSchemaType) {
     startTransition(async () => {
@@ -117,21 +119,16 @@ export function ScheduleForm({ schedule }: { schedule?: UserScheduleType }) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Zona horaria</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue></SelectValue>
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Intl.supportedValuesOf("timeZone").map((timezone) => (
-                    <SelectItem key={timezone} value={timezone}>
-                      {timezone}
-                      {` (${formatTimezoneOffset(timezone)})`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormControl>
+                <Combobox
+                  options={timezoneOptions}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Selecciona una zona horaria"
+                  searchPlaceholder="Buscar zona horaria..."
+                  emptyMessage="No se encontró la zona horaria"
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

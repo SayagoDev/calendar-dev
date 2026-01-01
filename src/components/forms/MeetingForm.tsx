@@ -29,6 +29,7 @@ import {
   SelectContent,
   SelectValue,
 } from "../ui/select";
+import { Combobox } from "../ui/combobox";
 import { formatTimeString, formatTimezoneOffset } from "@/lib/formatters";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { cn } from "@/lib/utils";
@@ -64,6 +65,14 @@ export function MeetingForm({
   const validTimesInTimezone = useMemo(() => {
     return validTimes.map((date) => toZonedTime(date, timezone));
   }, [validTimes, timezone]);
+
+  // Memoizar las opciones de zona horaria para evitar recalcular en cada render
+  const timezoneOptions = useMemo(() => {
+    return Intl.supportedValuesOf("timeZone").map((timezone) => ({
+      value: timezone,
+      label: `${timezone} (${formatTimezoneOffset(timezone)})`,
+    }));
+  }, []); // Array vacío = solo calcular una vez
 
   async function onSubmit(values: MeetingFormSchemaType) {
     startTransition(async () => {
@@ -105,22 +114,17 @@ export function MeetingForm({
           name="timezone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Zona horaría</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue></SelectValue>
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {Intl.supportedValuesOf("timeZone").map((timezone) => (
-                    <SelectItem key={timezone} value={timezone}>
-                      {timezone}
-                      {` (${formatTimezoneOffset(timezone)})`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormLabel>Zona horaria</FormLabel>
+              <FormControl>
+                <Combobox
+                  options={timezoneOptions}
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="Selecciona una zona horaria"
+                  searchPlaceholder="Buscar zona horaria..."
+                  emptyMessage="No se encontró la zona horaria"
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

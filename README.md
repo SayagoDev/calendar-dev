@@ -14,7 +14,7 @@ Calendar;dev es un sistema completo de gestión de citas que permite a los usuar
 
 ## 🚀 Demo en Vivo
 
-[Enlace a la demo](https://tu-dominio.com) _(Reemplazar con URL real)_
+[Enlace a la demo](https://calendar.sayago.dev/)
 
 ## ⚠️ Nota sobre Google OAuth
 

@@ -26,7 +26,7 @@ export default async function BookingPage({ params }: { params: Params }) {
         Bienvenido a la sección de agendamiento de citas. Por favor, selecciona
         un evento para continuar.
       </div>
-      <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {events.map((event) => (
           <EventCard key={event.id} {...event} />
         ))}
@@ -53,12 +53,16 @@ function EventCard({
   return (
     <Card className="flex flex-col">
       <CardHeader>
-        <CardTitle>{name}</CardTitle>
+        <CardTitle className="truncate" title={name}>
+          {name}
+        </CardTitle>
         <CardDescription>
           {formatEventDescription(durationInMinutes)}
         </CardDescription>
       </CardHeader>
-      {description && <CardContent>{description}</CardContent>}
+      {description && (
+        <CardContent className="wrap-break-words">{description}</CardContent>
+      )}
       <CardFooter className="flex justify-end gap-2 mt-auto">
         <Button asChild>
           <Link href={`/book/${clerkUserId}/${id}`}>Seleccionar</Link>

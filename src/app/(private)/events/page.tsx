@@ -1,3 +1,4 @@
+import { Container } from "@/components/Container";
 import { CopyEventButton } from "@/components/CopyEventButton";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,36 +20,38 @@ export default async function EventsPage() {
 
   return (
     <>
-      <div className="flex gap-4 items-baseline">
-        <h1 className="text-3xl lg:text-4xl xl:text-5xl font-semibold mb-6">
-          Eventos
-        </h1>
-        <Button asChild>
-          <Link href="/events/new" className="text-lg">
-            <CalendarPlus className="size-5" />
-            Nuevo Evento
-          </Link>
-        </Button>
-      </div>
-      {events.length > 0 ? (
-        <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(400px,1fr))]">
-          {events.map((event) => (
-            <EventCard key={event.id} {...event} />
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col items-center gap-4">
-          <CalendarRange className="size-16 mx-auto" />
-          No tienes ningún evento creado aún. Crea uno para empezar a agendar
-          citas.
-          <Button size="lg" className="text-lg" asChild>
+      <Container>
+        <div className="flex gap-4 items-baseline">
+          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-semibold mb-6">
+            Eventos
+          </h1>
+          <Button asChild>
             <Link href="/events/new" className="text-lg">
               <CalendarPlus className="size-5" />
               Nuevo Evento
             </Link>
           </Button>
         </div>
-      )}
+        {events.length > 0 ? (
+          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {events.map((event) => (
+              <EventCard key={event.id} {...event} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-4">
+            <CalendarRange className="size-16 mx-auto" />
+            No tienes ningún evento creado aún. Crea uno para empezar a agendar
+            citas.
+            <Button size="lg" className="text-lg" asChild>
+              <Link href="/events/new" className="text-lg">
+                <CalendarPlus className="size-5" />
+                Nuevo Evento
+              </Link>
+            </Button>
+          </div>
+        )}
+      </Container>
     </>
   );
 }
@@ -73,17 +76,21 @@ function EventCard({
   return (
     <Card className={cn("flex flex-col", !isActive && "border-secondary/50")}>
       <CardHeader className={cn(!isActive && "opacity-50")}>
-        <CardTitle>{name}</CardTitle>
+        <CardTitle className="truncate" title={name}>
+          {name}
+        </CardTitle>
         <CardDescription>
           {formatEventDescription(durationInMinutes)}
         </CardDescription>
       </CardHeader>
       {description && (
-        <CardContent className={cn(!isActive && "opacity-50")}>
+        <CardContent
+          className={cn("wrap-break-words", !isActive && "opacity-50")}
+        >
           {description}
         </CardContent>
       )}
-      <CardFooter className="flex justify-end gap-2 mt-auto">
+      <CardFooter className="flex flex-wrap justify-end gap-2 mt-auto">
         {isActive && (
           <CopyEventButton
             variant="outline"

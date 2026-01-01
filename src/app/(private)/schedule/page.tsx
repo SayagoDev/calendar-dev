@@ -18,7 +18,6 @@ export default function SchedulePage() {
     </Card>
   );
 }
-
 function ScheduleSkeleton() {
   return (
     <div className="flex flex-col gap-6">

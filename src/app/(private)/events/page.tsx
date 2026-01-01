@@ -9,15 +9,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getEvents } from "@/data/user/user-get-events";
 import { formatEventDescription } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import { CalendarPlus, CalendarRange } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 
-export default async function EventsPage() {
-  const events = await getEvents();
-
+export default function EventsPage() {
   return (
     <>
       <div className="flex gap-4 items-baseline">
@@ -31,6 +31,40 @@ export default async function EventsPage() {
           </Link>
         </Button>
       </div>
+      <Suspense fallback={<EventsSkeleton />}>
+        <RenderEvents />
+      </Suspense>
+    </>
+  );
+}
+
+function EventsSkeleton() {
+  return (
+    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <Card key={i} className="flex flex-col">
+          <CardHeader>
+            <Skeleton className="h-6 w-2/3 mb-2" />
+            <Skeleton className="h-4 w-1/3" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-4 w-full mb-2" />
+            <Skeleton className="h-4 w-2/4" />
+          </CardContent>
+          <CardFooter className="flex justify-end gap-2 mt-auto">
+            <Skeleton className="h-8 w-20" />
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+async function RenderEvents() {
+  const events = await getEvents();
+
+  return (
+    <>
       {events.length > 0 ? (
         <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {events.map((event) => (

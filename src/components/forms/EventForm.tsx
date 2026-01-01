@@ -65,7 +65,7 @@ export function EventForm({ event }: { event?: UserEventType }) {
 
       if (error) {
         toast.error(
-          "Occurrio un error insperado. Por favor, inténtalo de nuevo"
+          "Ocurrió un error inesperado. Por favor, inténtalo de nuevo"
         );
         return;
       }
